@@ -1,0 +1,64 @@
+---
+title: Nextjs dynamic import
+date: '2023-10-22'
+tags: ['nextjs', 'dynamic import']
+draft: false
+summary: Example of a markdown file with code blocks and syntax highlighting
+---
+
+# Dynamic import
+
+React.lazy는 컴포넌트 수준의 코드 분할을 통해 컴파일하는 자바스크립트 양을 최적화 할 수 있다. Nextjs의 [dynamic](/blog/Nextjs/dynamic.mdx)은 React.lazy와 suspense를 합친것이다.
+
+<br />
+[https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#nextdynamic](https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading#nextdynamic)
+<br />
+## dynamic import based url path
+<br />
+
+postPath에 따라 mdx 파일을 dynamic import하여 html로 바꿔주는 MdxViewer 컴포넌트를 만들었다. postPath로는 url path가 넘어온다.
+
+<br />
+
+```javascript
+const MdxViewer = ({ postPath, ImageBox }) => {
+  const Post = dynamic(
+    () => import(`${postPath}.mdx`).catch((err) => notFound()),
+    {
+      loading: () => <p>Loading...</p>,
+    }
+  );
+  ...
+}
+```
+
+<br />
+
+postPath로 넘어온 경로를 import하게 되면 실제 파일이 존재하더라도 cannot find module error가 발생한다. webpack에서 어떤 모듈을 미리 로드해야 하는지 알 수 없기 때문이다.
+
+<br />
+
+![error](/img/blog/error.png)
+
+<br />
+
+모듈이 존재하는 경로를 prefix로 넣어주면 webpack이 해당 디렉토리의 모듈들을 번들에 포함시킬 수 있다.
+
+<br />
+
+## My Code
+
+```javascript
+const MdxViewer = ({ postPath, ImageBox }) => {
+  const Post = dynamic(
+    () =>
+      import(`@/posts/${postPath}.mdx`).catch((err) => {
+        return notFound();
+      }),
+    {
+      loading: () => <p>Loading...</p>,
+    }
+  );
+  ...
+}
+```

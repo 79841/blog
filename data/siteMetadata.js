@@ -6,8 +6,8 @@ const siteMetadata = {
   description: 'This is a portfolio created by LEtMeDEv.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://skj974600.github.io',
-  siteRepo: 'https://github.com/skj974600/skj974600.github.io',
+  siteUrl: 'https://letmedev.vercel.app',
+  siteRepo: 'https://github.com/79841/blog',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/',
