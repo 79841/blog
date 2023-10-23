@@ -1,0 +1,62 @@
+---
+title: 'Baekjoon 2667'
+date: '2023-10-23'
+tags: ['bfs', 'algorithm', 'python', 'beakjoon']
+draft: false
+summary: solution of baekjoon 2667
+---
+
+Challenge link
+
+> [https://www.acmicpc.net/problem/2667](https://www.acmicpc.net/problem/2667)
+
+Sort of algorithm
+
+> DP
+
+Level
+
+> Gold 5
+
+```python
+import sys
+from collections import deque
+
+input = sys.stdin.readline
+
+N = int(input())
+graph = [list(map(int,list(input().strip()))) for _ in range(N)]
+complex_count = 0
+house_count_set = []
+for i in range(N):
+    for j in range(N):
+        house_count = 0
+        if graph[i][j] == 1:
+            deq = deque()
+            deq.append([i, j])
+            graph[i][j] = 0
+            complex_count += 1
+            while deq:
+                house_count += 1
+                y,x = deq.pop()
+
+                ny = [1, -1, 0, 0]
+                nx = [0, 0, 1, -1]
+                for k in range(4):
+                    dx = x + nx[k]
+                    dy = y + ny[k]
+                    if not (dx > -1 and dx < N and dy > -1 and dy < N):
+                        continue
+                    if graph[dy][dx] == 1:
+                        graph[dy][dx] = 0
+                        deq.append([dy, dx])
+
+            house_count_set.append(house_count)
+
+print(complex_count)
+house_count_set.sort()
+for house_count in house_count_set:
+    print(house_count)
+
+
+```
