@@ -1,0 +1,104 @@
+---
+title: Github page with nextjs app router
+date: '2023-10-22'
+tags: ['nextjs', 'github page', 'gh-pages', 'static exports', 'generateStaticParams', 'app router']
+draft: false
+summary: Create github page in nextjs using static exports and generateStaticParams
+---
+
+# Nextjs로 github page 만들기
+
+Nextjs로 github page를 배포할 때 static exports를 사용해야 한다.
+
+## Static Exports
+
+static exports는 build시에 route마다 html 파일을 만든다. static exports를 이용하면 불필요한 js 코드를 로딩하지않고 번들사이즈를 줄이며 페이지 로드를 빠르게 할 수 있다.
+
+### Static Exports 설정
+
+next.config.js에서 output:'export';를 추가하면 된다.
+
+```javascript
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
+  output: 'export',
+}
+
+module.exports = nextConfig
+```
+
+https://nextjs.org/docs/app/building-your-application/deploying/static-exports
+
+### Static Exports 사용시 불가능한 기능
+
+static exports를 사용시 지원하지 않는 기능들이 있다. 여기에는 dynamic routes와 cookies, rewrites, redirects, headers, middleware 등이 있다.
+
+https://nextjs.org/docs/app/building-your-application/deploying/static-exports#unsupported-features
+
+# Static Exports에서 dynamic routes 사용하기
+
+github page를 만들때 posts 폴더에 저장된 파일들을 읽어와 보여주는 기능을 만들고 싶었다.
+
+뒤로가기가 가능하도록 url이 변해야 하고 페이지내에 북마크 기능을 위해 id를 사용하여 hash를 사용할 수 없었다. 파일 경로가 들어가기에 query 파라미터로 넘겨주는 것은 보안상 좋지 않다. path 파라미터로 파일경로를 넘겨주기위해 dynamic routes를 사용해야 하는데 github page는 static export를 무조건 해야하기에 문제가 있었다.
+
+## generateStaticParams
+
+generateStaticParams는 dynamic routes를 빌드시에 정적으로 생성할 수 있다. 이를 이용하면 github page에서 dynamic routes를 사용할 수 있다.
+https://nextjs.org/docs/app/api-reference/functions/generate-static-params#catch-all-dynamic-segment
+
+### Catch-all dynamic segment
+
+catch-all dynamic segment 사용시 array로 routes를 미리 만들면 된다.
+
+```javascript
+export function generateStaticParams() {
+  return [{ slug: ['a', '1'] }, { slug: ['b', '2'] }, { slug: ['c', '3'] }]
+}
+
+// Three versions of this page will be statically generated
+// using the `params` returned by `generateStaticParams`
+// - /product/a/1
+// - /product/b/2
+// - /product/c/3
+export default function Page({ params }) {
+  const { slug } = params
+  // ...
+}
+```
+
+### My Code
+
+```javascript
+// makeFileBAsedDynamicPath.js
+import fs from 'fs'
+
+export const makeFileBasedDynamicPath = (path, pathList = []) => {
+  const files = fs.readdirSync(path, { withFileTypes: true })
+  for (let file of files) {
+    let filePath = `${path}/${file.name}`
+    if (file.isDirectory()) {
+      pathList.push(`${filePath}/index.mdx`)
+      makeFileBasedDynamicPath(filePath, pathList)
+    } else {
+      pathList.push(filePath)
+    }
+  }
+  return pathList
+}
+```
+
+```javascript
+// page.js
+export async function generateStaticParams() {
+  const postTree = makeFileBasedDynamicPath(BLOG_POSTS_DIR)
+  const dynamicPath = [
+    ...postTree.map((post) => ({
+      postPath: `${post.slice(BLOG_POSTS_DIR.length)}`.split('/').splice(1),
+    })),
+    { postPath: [] },
+  ]
+  return dynamicPath
+}
+```

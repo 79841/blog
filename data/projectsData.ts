@@ -1,19 +1,22 @@
 const projectsData = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
-    imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    title: 'KSCIA Backend',
+    description: `KSCIA backend server to provide APIs and services`,
+    imgSrc: 'https://raw.githubusercontent.com/79841/kscia-back/main/images/readme/logo.png',
+    href: 'https://github.com/79841/kscia-back',
   },
   {
-    title: 'The Time Machine',
-    description: `Imagine being able to travel back in time or to the future. Simple turn the knob
-    to the desired date and press "Go". No more worrying about lost keys or
-    forgotten headphones with this simple yet affordable solution.`,
-    imgSrc: '/static/images/time-machine.jpg',
+    title: 'KSCIA Admin App ',
+    description: `Admin App for managing and consulting KSCIA app users`,
+    imgSrc:
+      'https://raw.githubusercontent.com/79841/kscia-admin-app/main/assets/images/readme/logo.png',
     href: '/blog/the-time-machine',
+  },
+  {
+    title: 'KSCIA App',
+    description: `Lifestyle app for people with spinal cord disability`,
+    imgSrc: 'https://raw.githubusercontent.com/79841/kscia-app/main/assets/images/readme/logo.png',
+    href: 'https://github.com/79841/kscia-app',
   },
 ]
 
