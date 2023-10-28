@@ -1,42 +1,67 @@
-// import { useRef } from "react"
 'use client'
+import '@/css/splash.css'
 import { useEffect, useState } from 'react'
-
-const style = {
-  textShadow: ' -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white',
-}
-
-const style2 = {
-  // boxShadow: '0px 0px 133px 0px rgba(227, 216, 216, 0.75)',
-}
+import Cookies from 'js-cookie'
+import { useTheme } from 'next-themes'
 
 export default function SplashScreen() {
-  const [height, setHeight] = useState('h-0')
+  const [height, setHeight] = useState<string>('h-0')
+  const [opacity, setOpacity] = useState<string>('opacity-100')
+  const [toShow, setToShow] = useState<boolean>(false)
+
+  const { theme } = useTheme()
+
+  const setCookie = () => {
+    Cookies.set('Splashed', 'true', { expires: 1 })
+  }
+
   useEffect(() => {
-    setTimeout(() => setHeight('h-full'), 500)
+    if (typeof Cookies.get('Splashed') == 'undefined') {
+      console.log(theme)
+      setToShow(true)
+      setTimeout(() => setHeight('h-full'), 500)
+      setTimeout(() => setOpacity('opacity-0'), 1500)
+      setTimeout(() => {
+        setCookie()
+        setToShow(false)
+      }, 2200)
+    }
   }, [])
 
-  // const ref = useRef(second)
-  return (
+  return toShow ? (
     <div>
-      <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-white text-4xl text-black antialiased duration-1000 dark:bg-gray-950 dark:text-white sm:text-6xl md:text-9xl">
+      <div
+        className={`absolute left-0 top-0 flex h-full w-full items-center justify-center bg-white text-4xl text-black antialiased ${opacity} duration-1000 dark:bg-gray-950 dark:text-white sm:text-6xl md:text-9xl`}
+      >
         <div className="relative flex h-12 w-full items-center sm:h-20 md:h-40">
           <div
-            className={`absolute z-10 flex h-full w-full items-center justify-center font-bold dark:text-gray-950`}
-            style={style}
+            className={`${
+              theme == 'dark' ? 'light-text-edge' : 'dark-text-edge'
+            } dark:light-text-edge absolute z-10 flex h-full w-full items-center justify-center font-bold text-white dark:text-gray-950`}
           >
-            hello
+            LEtMeDEv
           </div>
           <div
-            className={`absolute left-[50%] top-[50%] z-50 flex translate-x-[-50%] translate-y-[-50%] ${height} transition-height w-full items-center justify-center overflow-hidden bg-red-900 font-bold duration-700 ease-linear`}
-            style={style2}
+            className={`transition-height   z-50 flex h-full w-full flex-col items-center justify-center  `}
           >
-            <div className="absolute top-0 h-[10px] w-full bg-gray-400" />
-            hello
-            <div className="absolute bottom-0 h-[10px] w-full bg-gray-400" />
+            <div
+              className={`${
+                theme == 'dark' ? 'light-line-shadow' : 'dark-line-shadow'
+              }  h-[2px] w-[60%] bg-gray-400`}
+            />
+            <div
+              className={`flex ${height} w-ful items-center justify-center overflow-hidden  font-bold duration-700 ease-linear`}
+            >
+              LEtMeDEv
+            </div>
+            <div
+              className={`${
+                theme == 'dark' ? 'light-line-shadow' : 'dark-line-shadow'
+              }  h-[1px] w-[60%] bg-gray-400`}
+            />
           </div>
         </div>
       </div>
     </div>
-  )
+  ) : null
 }
