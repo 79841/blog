@@ -1,0 +1,58 @@
+---
+title: '[Baekjoon 9205] 단지번호붙이기'
+date: '2023-10-29'
+tags: ['bfs', 'algorithm', 'python', 'beakjoon']
+draft: false
+summary: solution of baekjoon 9205, 단지번호붙이기
+---
+
+Challenge link
+
+> [https://www.acmicpc.net/problem/9205](https://www.acmicpc.net/problem/9205)
+
+Sort of algorithm
+
+> BFS
+
+Level
+
+> Gold 5
+
+```python
+import sys
+from collections import deque
+
+input = sys.stdin.readline
+
+t = int(input())
+
+def get_distance(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def get_happy_or_sad():
+    store_count = int(input())
+    home_pos = list(map(int, input().split()))
+    pos_set = [list(map(int, input().split())) for _ in range(store_count + 1)]
+    penta_port_pos = pos_set[-1]
+
+    deq = deque()
+    visited = deque()
+    deq.append([*home_pos, 20])
+    visited.append(home_pos)
+    while deq:
+        x, y, beer_count = deq.pop()
+        if x == penta_port_pos[0] and y == penta_port_pos[1]:
+            return "happy"
+        if beer_count <= 0: continue
+        for pos in pos_set:
+            if get_distance([x, y], pos) <= 1000 and pos not in visited:
+                deq.append([*pos, beer_count - 1])
+                visited.append(pos)
+    return "sad"
+
+
+for _ in range(t):
+    result = get_happy_or_sad()
+    print(result)
+
+```
