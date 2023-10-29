@@ -15,9 +15,29 @@
 }
 
 .light-line-shadow {
-  box-shadow: 0px 0px 50px 20px rgba(227, 216, 216, 0.75);
+  box-shadow: 0px 0px 15px 5px rgba(227, 216, 216, 0.75);
 }
 
 .dark-line-shadow {
-  box-shadow: 0px 0px 50px 20px rgba(82, 78, 78, 0.75);
+  box-shadow: 0px 0px 15px 5px rgba(82, 78, 78, 0.75);
+}
+
+@media (min-width: 640px) {
+  .light-line-shadow {
+    box-shadow: 0px 0px 30px 14px rgba(227, 216, 216, 0.75);
+  }
+
+  .dark-line-shadow {
+    box-shadow: 0px 0px 30px 14px rgba(82, 78, 78, 0.75);
+  }
+}
+
+@media (min-width: 768px) {
+  .light-line-shadow {
+    box-shadow: 0px 0px 50px 20px rgba(227, 216, 216, 0.75);
+  }
+
+  .dark-line-shadow {
+    box-shadow: 0px 0px 50px 20px rgba(82, 78, 78, 0.75);
+  }
 }

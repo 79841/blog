@@ -16,16 +16,14 @@ export default function SplashScreen() {
   }
 
   useEffect(() => {
-    if (typeof Cookies.get('Splashed') == 'undefined') {
-      console.log(theme)
-      setToShow(true)
-      setTimeout(() => setHeight('h-full'), 500)
-      setTimeout(() => setOpacity('opacity-0'), 1500)
-      setTimeout(() => {
-        setCookie()
-        setToShow(false)
-      }, 2200)
-    }
+    // if (typeof Cookies.get('Splashed') != 'undefined') return
+    setToShow(true)
+    setTimeout(() => setHeight('h-full'), 500)
+    setTimeout(() => setOpacity('opacity-0'), 1500)
+    setTimeout(() => {
+      setCookie()
+      setToShow(false)
+    }, 2200)
   }, [])
 
   return toShow ? (
@@ -47,7 +45,7 @@ export default function SplashScreen() {
             <div
               className={`${
                 theme == 'dark' ? 'light-line-shadow' : 'dark-line-shadow'
-              }  h-[2px] w-[60%] bg-gray-400`}
+              }  h-[1px] w-[60%] bg-gray-400`}
             />
             <div
               className={`flex ${height} w-ful items-center justify-center overflow-hidden  font-bold duration-700 ease-linear`}
