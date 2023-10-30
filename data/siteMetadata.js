@@ -9,7 +9,7 @@ const siteMetadata = {
   siteUrl: 'https://letmedev.vercel.app',
   siteRepo: 'https://github.com/79841/blog',
   siteLogo: '/static/images/logo.png',
-  socialBanner: '/static/images/test-twitter-card.png',
+  socialBanner: '/static/images/card.png',
   mastodon: 'https://mastodon.social/',
   email: '79841@naver.com',
   github: 'https://github.com/sk974600',
