@@ -1,9 +1,9 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'My Blog',
+  title: 'LEtMeDEv',
   author: 'LEtMeDEv',
   headerTitle: 'LEtMeDEv',
-  description: 'This is a portfolio created by LEtMeDEv.',
+  description: "This is a place to leave LEtMeDEv's memories",
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: 'https://letmedev.vercel.app',
