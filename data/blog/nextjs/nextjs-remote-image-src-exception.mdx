@@ -1,10 +1,59 @@
 ---
-title: Nextjs remote image src exception
+title: [Nextjs] How to load images with external src 
 date: '2023-10-25'
-tags: ['remote image','nextjs', 'next.config.js']
-draft: true
-summary: In Nexjs' dynamic import, why 'cannot find module' error ocurred and how to fix it
+tags: ['remote image', 'nextjs', 'next.config.js', 'remotePatterns', 'domains']
+draft: false
+summary: Configuration for loading external image src
 ---
 
+Nextjs restricts the loading of external images to protect the application from attacks such as XSS and CSRF.
+To load external images, you need to add configuration to next.config.js.
 
-draft
+# remotePatterns
+
+`remotePatterns` property can configure images\' source patterns.
+
+```js:next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.example.com',
+        port: '',
+        pathname: '/account123/**',
+      },
+    ],
+  },
+}
+```
+
+- match a single path segment or subdomain
+- \*\* match any number of path segments at the end or subdomains at the beginning
+
+## Example allowing any external images
+
+```js:next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ]
+  },
+}
+```
+
+# domains
+
+Using `domains` property, you can configure a list of allowed hostnames for external images.
+
+```js:next.config.js
+module.exports = {
+  images: {
+    domains: ['image1.example.com', 'image2.example.com'],
+  },
+}
+```
