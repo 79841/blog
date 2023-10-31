@@ -1,0 +1,96 @@
+---
+title: '[Baekjoon 16236] 벽 부수고 이동하기'
+date: '2023-10-30'
+tags: ['bfs', 'algorithm', 'python', 'beakjoon']
+draft: false
+summary: solution of baekjoon 16236, 벽 부수고 이동하기
+---
+
+Challenge link
+
+> [https://www.acmicpc.net/problem/16236](https://www.acmicpc.net/problem/16236)
+
+Sort of algorithm
+
+> BFS
+
+Level
+
+> Gold 3
+
+```python
+import sys
+from collections import deque
+input = sys.stdin.readline
+
+N = int(input())
+graph = deque()
+shark_y_pos = None
+shark_x_pos = None
+shark_size = 2
+move_count = 0
+eating_count = 0
+
+for i in range(N):
+    row = list(map(int, input().split()))
+    if 9 in row:
+        shark_y_pos = i
+        shark_x_pos = row.index(9)
+    graph.append(row)
+
+graph[shark_y_pos][shark_x_pos] = 0
+
+
+dx = [0, -1, 1, 0]
+dy = [-1, 0, 0, 1]
+
+def find_fish(shark_y_pos, shark_x_pos, move_count):
+    fish_set = deque()
+    queue = deque()
+    queue.append([shark_y_pos, shark_x_pos, move_count])
+    visited = [[0] * N for _ in range(N)]
+    visited[shark_y_pos][shark_x_pos] = 1
+    while queue:
+        y, x, mc = queue.popleft()
+
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+
+            if nx < 0 or nx > N - 1 or ny < 0 or ny > N - 1:
+                continue
+
+            if (graph[ny][nx] == 0 or graph[ny][nx] == shark_size) and visited[ny][nx] == 0:
+                queue.append([ny, nx, mc + 1])
+                visited[ny][nx] = 1
+
+
+
+            elif 0 < graph[ny][nx] < shark_size:
+                fish_set.append([ny, nx, mc + 1])
+
+    if len(fish_set) > 0:
+        fish_set = deque(sorted(fish_set))
+        nearest_fish = fish_set[0]
+        for fish in fish_set:
+            if fish[2] < nearest_fish[2]:
+                nearest_fish = fish
+        graph[nearest_fish[0]][nearest_fish[1]] = 0
+        return nearest_fish
+
+    return [shark_y_pos, shark_x_pos, move_count]
+
+
+
+while True:
+    prev_move_count = move_count
+    shark_y_pos,shark_x_pos, move_count = find_fish(shark_y_pos,shark_x_pos, move_count)
+    eating_count += 1
+    if eating_count == shark_size:
+        shark_size += 1
+        eating_count = 0
+
+    if prev_move_count == move_count:
+        print(move_count)
+        break
+```
