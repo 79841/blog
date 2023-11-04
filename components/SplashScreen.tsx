@@ -29,7 +29,7 @@ export default function SplashScreen() {
   return toShow ? (
     <div>
       <div
-        className={`absolute left-0 top-0 flex h-full w-full items-center justify-center bg-white text-4xl text-black antialiased ${opacity} duration-1000 dark:bg-gray-950 dark:text-white sm:text-6xl md:text-9xl`}
+        className={`fixed left-0 top-0 flex h-full w-full items-center justify-center bg-white text-4xl text-black antialiased ${opacity} duration-1000 dark:bg-gray-950 dark:text-white sm:text-6xl md:text-9xl`}
       >
         <div className="relative flex h-12 w-full items-center sm:h-20 md:h-40">
           <div

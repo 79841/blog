@@ -22,8 +22,12 @@ export default function Home({ posts }) {
         </div>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {!posts.length && 'No posts found.'}
-          {posts.slice(0, MAX_DISPLAY).map((post) => {
+          {posts.slice(0, MAX_DISPLAY).map(async (post) => {
             const { slug, date, title, summary, tags } = post
+            const views = await (
+              await fetch(`${process.env.LOCALHOST}/api/views/${slug.split('/').at(-1)}`)
+            ).json()
+            const viewCount = views != null ? views.views : 0
             return (
               <li key={slug} className="py-12">
                 <article>
@@ -63,6 +67,9 @@ export default function Home({ posts }) {
                         >
                           Read more &rarr;
                         </Link>
+                        <div className="text-right text-gray-500 dark:text-gray-400">
+                          {`views: ${viewCount}`}
+                        </div>
                       </div>
                     </div>
                   </div>

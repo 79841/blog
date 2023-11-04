@@ -12,6 +12,7 @@ import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
+import ViewCountIncreaser from './_components/ViewCountIncreaser'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -81,6 +82,7 @@ export const generateStaticParams = async () => {
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const slug = decodeURI(params.slug.join('/'))
+
   // Filter out drafts in production
   const sortedCoreContents = allCoreContent(sortPosts(allBlogs))
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug)
@@ -117,7 +119,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   const Layout = layouts[post.layout || defaultLayout]
 
   return (
-    <>
+    <ViewCountIncreaser title={slug.split('/').at(-1) as string}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -125,6 +127,6 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
       </Layout>
-    </>
+    </ViewCountIncreaser>
   )
 }
