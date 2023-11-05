@@ -13,7 +13,8 @@
     "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles",
     "prisma:generate": "npx prisma generate",
     "prisma:deploy": "prisma migrate dev",
-    "vercel-build": "yarn run prisma:generate && yarn run build"
+    "vercel-build": "yarn run prisma:generate && yarn run build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@next/bundle-analyzer": "13.5.6",
