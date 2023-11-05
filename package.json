@@ -6,12 +6,14 @@
     "postinstall": "npx prisma generate",
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
-    "build": "npm run postinstall && cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
+    "build": "yarn run postinstall && cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
     "predeploy": "npm run build",
-    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles"
+    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles",
+    "prisma:deploy": "prisma migrate dev",
+    "vercel-build": "npm run prisma:deploy && npm run build"
   },
   "dependencies": {
     "@next/bundle-analyzer": "13.5.6",
