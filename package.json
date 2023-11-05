@@ -14,7 +14,7 @@
     "prisma:generate": "npx prisma generate",
     "prisma:deploy": "prisma migrate dev",
     "vercel-build": "yarn run prisma:generate && yarn run build",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@next/bundle-analyzer": "13.5.6",
