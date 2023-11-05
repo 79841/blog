@@ -3,6 +3,7 @@
   "version": "2.0.2",
   "private": true,
   "scripts": {
+    "postinstall": "npx prisma generate",
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
     "build": "npm run postinstall && cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
@@ -10,8 +11,7 @@
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
     "predeploy": "npm run build",
-    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles",
-    "postinstall": "npx prisma generate"
+    "deploy": "touch out/.nojekyll && gh-pages -d out --dotfiles"
   },
   "dependencies": {
     "@next/bundle-analyzer": "13.5.6",
