@@ -4,6 +4,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
 import NewsletterForm from 'pliny/ui/NewsletterForm'
 import SplashScreen from '@/components/SplashScreen'
+import ViewCount from './_components/ViewCount'
 
 const MAX_DISPLAY = 5
 
@@ -24,12 +25,7 @@ export default function Home({ posts }) {
           {!posts.length && 'No posts found.'}
           {posts.slice(0, MAX_DISPLAY).map(async (post) => {
             const { slug, date, title, summary, tags } = post
-            const views = await (
-              await fetch(`${process.env.LOCALHOST}/api/views/${slug.split('/').at(-1)}`)
-            ).text()
-            // const viewCount = views != null ? views.views : 0
-            console.log('views')
-            console.log(views)
+
             return (
               <li key={slug} className="py-12">
                 <article>
@@ -69,9 +65,7 @@ export default function Home({ posts }) {
                         >
                           Read more &rarr;
                         </Link>
-                        {/* <div className="text-right text-gray-500 dark:text-gray-400">
-                          {`views: ${viewCount}`}
-                        </div> */}
+                        <ViewCount slug={slug} />
                       </div>
                     </div>
                   </div>
