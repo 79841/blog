@@ -28,6 +28,7 @@ export default function Home({ posts }) {
               await fetch(`${process.env.LOCALHOST}/api/views/${slug.split('/').at(-1)}`)
             ).json()
             const viewCount = views != null ? views.views : 0
+            console.log(viewCount)
             return (
               <li key={slug} className="py-12">
                 <article>
@@ -67,9 +68,9 @@ export default function Home({ posts }) {
                         >
                           Read more &rarr;
                         </Link>
-                        <div className="text-right text-gray-500 dark:text-gray-400">
+                        {/* <div className="text-right text-gray-500 dark:text-gray-400">
                           {`views: ${viewCount}`}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
