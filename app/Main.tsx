@@ -26,7 +26,7 @@ export default function Home({ posts }) {
             const { slug, date, title, summary, tags } = post
             const views = await (
               await fetch(`${process.env.LOCALHOST}/api/views/${slug.split('/').at(-1)}`)
-            ).json()
+            ).text()
             const viewCount = views != null ? views.views : 0
             console.log(viewCount)
             return (
