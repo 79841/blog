@@ -27,8 +27,8 @@ export default function Home({ posts }) {
             const views = await (
               await fetch(`${process.env.LOCALHOST}/api/views/${slug.split('/').at(-1)}`)
             ).text()
-            const viewCount = views != null ? views.views : 0
-            console.log(viewCount)
+            // const viewCount = views != null ? views.views : 0
+            console.log(views)
             return (
               <li key={slug} className="py-12">
                 <article>
