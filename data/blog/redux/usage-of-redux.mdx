@@ -1,20 +1,216 @@
 ---
-title: '[Redux] Usage and folder structure'
+title: '[Redux] Usage and folder structure with redux toolkit and redux persist'
 date: '2023-11-03'
-tags: ['redux', 'redux-toolkit 'nextjs', 'structure']
+tags: ['redux', 'redux-toolkit', 'redux-', 'nextjs', 'structure']
 draft: false
-summary: 'How to use redux and build folder structure'
+summary: 'How to use redux and build folder structure with redux toolkit and redux persist in Nextjs'
 ---
 
 # Nextjs template
+
 ```sh
 npx create-next-app --example with-redux my-app
 ```
 
 # Install
+
 ```sh
 yarn add @reduxjs/toolkit
 yarn add react-redux
+yarn add redux-persist @types/redux-persist
 ```
 
+# Folder structure
 
+```sh
+├─app
+│ │ favicon.ico
+│ │ globals.css
+│ │ layout.tsx
+│ │ page.tsx
+│ │
+│ └─_components
+│ CategoryList.tsx
+│ TaskList.tsx
+│
+├─components
+│ Category.tsx
+│ Task.tsx
+│
+├─store
+│ │ index.ts
+│ │ providers.tsx
+│ │ rootReducer.ts
+│ │ storage.ts
+│ │ store.ts
+│ │
+│ └─slices
+│ │ index.ts
+│ │
+│ ├─categoryListSlice
+│ │ categoryListSlice.ts
+│ │ index.ts
+│ │ selectors.ts
+│ │
+│ └─taskListSlice
+│ index.ts
+│ selectors.ts
+│ taskListSlice.ts
+│
+└─types
+Category.ts
+Task.ts
+```
+
+# Slice
+
+```typescript:/store/slices/taskListSlice/taskListSlice.ts
+import type { Task as TTask } from '@/types/Task'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+
+const initialState: TaskListSliceState = []
+
+export const taskListSlice = createSlice({
+  name: 'task list',
+  initialState,
+  reducers: {
+    add: (state, action: PayloadAction<TTask>) => {
+      if (action.payload.name === '' || action.payload.category === '') return state
+      for (let task of state) {
+        if (task.name == action.payload.name) return state
+      }
+      state.push(action.payload)
+    },
+    switchState: (state, action: PayloadAction<string>) => {
+      return state.map((task) => {
+        return {
+          ...task,
+          done: task.name === action.payload ? !task.done : task.done,
+        }
+      })
+    },
+    delete: (state, action: PayloadAction<string>) => {
+      return state.filter((task) => task.name != action.payload)
+    },
+  },
+})
+
+export const taskListActions = taskListSlice.actions
+
+export type TaskListSliceState = TTask[]
+```
+
+# Storage
+
+```typescript:/store/storage.ts
+import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+
+const createNoopStorage = () => {
+  return {
+    getItem(_key: any) {
+      return Promise.resolve(null);
+    },
+    setItem(_key: any, value: any) {
+      return Promise.resolve(value);
+    },
+    removeItem(_key: any) {
+      return Promise.resolve();
+    },
+  };
+};
+
+export const storage =
+  typeof window === "undefined"
+    ? createNoopStorage()
+    : createWebStorage("local");
+
+```
+
+# RootReducer
+
+```typescript:/store/rootReducer.ts
+import { persistReducer } from "redux-persist";
+import { categoryListSlice, taskListSlice } from "./slices";
+import { storage } from "./storage";
+import { combineReducers } from "@reduxjs/toolkit";
+
+export const reducer = {
+  taskList: taskListSlice.reducer,
+  categoryList: categoryListSlice.reducer,
+};
+
+const persistConfig = {
+  key: "root",
+  storage,
+  // whitelist: ["categoryList"],
+};
+
+export const persistedReducer = persistReducer(
+  persistConfig,
+  combineReducers(reducer)
+);
+
+```
+
+# Store
+
+```typescript:/store/store.ts
+import { configureStore } from "@reduxjs/toolkit";
+
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+  persistStore,
+} from "redux-persist";
+import { persistedReducer } from "./rootReducer";
+
+export const reduxStore = configureStore({
+  reducer: persistedReducer,
+  devTools: process.env.NODE_ENV !== "production",
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+export const persistor = persistStore(reduxStore);
+
+export type ReduxStore = typeof reduxStore;
+export type ReduxState = ReturnType<typeof reduxStore.getState>;
+
+```
+
+# Selector
+
+```typescript:/store/slices/taskListSlice/selectors.ts
+import type { ReduxState } from "@/store";
+
+export const selectTaskList = (state: ReduxState) => state.taskList;
+```
+
+# Provider
+
+```typescript:/store/providers.tsx
+"use client";
+
+import { Provider } from "react-redux";
+import { persistor, reduxStore } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
+
+export const Providers = ({ children }: React.PropsWithChildren) => {
+  return (
+    <Provider store={reduxStore}>
+      <PersistGate loading={null} persistor={persistor}>
+        {children}
+      </PersistGate>
+    </Provider>
+  );
+};
+
+```
