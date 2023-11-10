@@ -2,10 +2,169 @@
 title: '[Context API] Usage and folder structure'
 date: '2023-11-10'
 tags: ['context api', 'react', 'nextjs', 'structure']
-draft: true
+draft: false
 summary: 'How to use context-api and build folder structure'
 ---
 
 # Practice example
 
 https://github.com/79841/context-api-template
+
+# Folder structure
+
+```sh
+├─app
+│  │  favicon.ico
+│  │  globals.css
+│  │  layout.tsx
+│  │  page.tsx
+│  │
+│  └─_components
+│          Cart.tsx
+│          ProductList.tsx
+│
+├─components
+│      Product.tsx
+│      ProductInCart.tsx
+│
+├─context
+│  └─CartContext
+│          CartContext.ts
+│          CartContextProvider.tsx
+│          index.ts
+│
+├─data
+│      products.ts
+│
+└─types
+        Cart.ts
+        Product.ts
+```
+
+# Context
+
+```typescript:/context/CartContext/CartContext.ts
+"use client";
+import { TCart } from "@/types/Cart";
+import { TProduct } from "@/types/Product";
+import { createContext, useContext } from "react";
+
+type TCartContext = {
+  cart: TCart;
+  addProduct: (product: TProduct, count: number) => void;
+  deleteProduct: (productId: number) => void;
+  getTotalPrice: () => number;
+};
+
+export const CartContext = createContext<TCartContext>({
+  cart: {},
+  addProduct(product: TProduct, count: number) {},
+  deleteProduct(productId: number) {},
+  getTotalPrice() {
+    return 0;
+  },
+});
+
+export const useCartContext = () => useContext(CartContext);
+```
+
+# Context provider
+
+```typescript:/context/CartContext/CartContextProvider.tsx
+"use client";
+
+import { TCart } from "@/types/Cart";
+import { TProduct } from "@/types/Product";
+import { useState } from "react";
+import { CartContext } from "./CartContext";
+
+type TProps = React.PropsWithChildren;
+
+export const CartContextProvider = ({ children }: TProps) => {
+  const [cart, setCart] = useState<TCart>([]);
+
+  const cartController = {
+    addProduct(product: TProduct, count: number) {
+      const newCart =
+        product.id in cart
+          ? {
+              ...cart,
+              [product.id]: {
+                count: cart[product.id].count + count,
+                product,
+              },
+            }
+          : { ...cart, [product.id]: { count, product } };
+      setCart(newCart);
+    },
+
+    deleteProduct(productId: number) {
+      const { [productId]: _, ...newCart } = cart;
+      setCart(newCart);
+    },
+
+    getTotalPrice() {
+      return Object.values(cart).reduce((total, { count, product }) => {
+        return total + count * product.price;
+      }, 0);
+    },
+  };
+  return (
+    <CartContext.Provider value={{ cart, ...cartController }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+```
+
+# page.tsx
+
+```typescript:/app/page.tsx
+import { CartContextProvider } from "@/context/CartContext";
+import ProductList from "./_components/ProductList";
+import Cart from "./_components/Cart";
+
+export default function Home() {
+  return (
+    <div className="w-full h-screen flex justify-center">
+      <CartContextProvider>
+        <div className="w-1/2 h-full">
+          <ProductList />
+        </div>
+        <div className="w-1/2 h-full">
+          <Cart />
+        </div>
+      </CartContextProvider>
+    </div>
+  );
+}
+```
+
+# Cart.tsx
+
+```typescript:/app/_components/Cart.tsx
+"use client";
+import ProductInCart from "@/components/ProductInCart";
+import { useCartContext } from "@/context/CartContext";
+
+const Cart = () => {
+  const { cart, getTotalPrice } = useCartContext();
+  const totalPrice = getTotalPrice();
+  return (
+    <div className="bg-black text-white w-full h-full">
+      <div className="flex">
+        <div className="mr-10">Cart</div>
+        <div>{totalPrice}</div>
+      </div>
+
+      <div className="flex justify-start">
+        {Object.values(cart).map(({ count, product }) => (
+          <ProductInCart key={product.id} count={count} product={product} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Cart;
+```
