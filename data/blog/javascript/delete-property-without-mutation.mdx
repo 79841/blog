@@ -1,0 +1,25 @@
+---
+title: '[JS] Delete a property on an Object without mutation'
+date: '2023-11-10'
+tags: ['javascript', 'destructuring']
+draft: false
+summary: 'How to delete a property on an Object without mutation? This can be done using destructuring'
+---
+
+# `delete` causes a mutation
+
+```javascript
+let testObj = { test01: 10, test02: 20, test03: 30 }
+let key = 'test01'
+delete testObj[key] // Mutation occurs
+console.log(testObj)
+```
+
+# Detructuring can avoid mutations
+
+```javascript
+const testObj = { test01: 10, test02: 20, test03: 30 }
+let key = 'test01'
+const { [key]: _, ...otherObj } = testObj // No mutations occur
+console.log(otherObj)
+```
