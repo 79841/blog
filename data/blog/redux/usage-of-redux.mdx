@@ -66,6 +66,7 @@ Task.ts
 
 ```typescript:/store/slices/taskListSlice/taskListSlice.ts
 import type { Task as TTask } from '@/types/Task'
+// PayloadAction: action type
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 const initialState: TaskListSliceState = []
@@ -95,15 +96,21 @@ export const taskListSlice = createSlice({
   },
 })
 
+// export actions
 export const taskListActions = taskListSlice.actions
 
+// export slice state
 export type TaskListSliceState = TTask[]
 ```
 
 # Storage
 
+Required when using redux persist
+
 ```typescript:/store/storage.ts
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
+
+// Creating dummy storage since it's impossible to create local storage on server side
 
 const createNoopStorage = () => {
   return {
@@ -118,6 +125,8 @@ const createNoopStorage = () => {
     },
   };
 };
+
+// Check if local storage exists
 
 export const storage =
   typeof window === "undefined"
@@ -142,6 +151,9 @@ export const reducer = {
 const persistConfig = {
   key: "root",
   storage,
+
+  // "whitelist" is required when allowing certain slice
+
   // whitelist: ["categoryList"],
 };
 
@@ -172,6 +184,9 @@ export const reduxStore = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
+
+    // Required when using redux persist, otherwise an error is occured in register action
+
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
@@ -187,6 +202,8 @@ export type ReduxState = ReturnType<typeof reduxStore.getState>;
 ```
 
 # Selector
+
+Export Selector
 
 ```typescript:/store/slices/taskListSlice/selectors.ts
 import type { ReduxState } from "@/store";
@@ -215,4 +232,35 @@ export const Providers = ({ children }: React.PropsWithChildren) => {
 
 ```
 
-# extra
+# layout.tsx
+
+```typescript:/app/layout.tsx
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Providers } from "@/store";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Todo",
+  description: "To-do app with redux",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+
+  // If null is returned while loading persist, an error is occured because the html and body tags don't exist.
+
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+
+```
