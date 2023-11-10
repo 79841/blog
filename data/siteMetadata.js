@@ -12,7 +12,7 @@ const siteMetadata = {
   socialBanner: '/static/images/card.png',
   mastodon: 'https://mastodon.social/',
   email: '79841@naver.com',
-  github: 'https://github.com/sk974600',
+  github: 'https://github.com/79841',
   twitter: 'https://twitter.com/Twitter',
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
