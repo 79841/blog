@@ -5,3 +5,63 @@ tags: ['typescript']
 draft: true
 summary: 'How to map mongodb using prisma in Nextjs and deploy on vercel'
 ---
+
+## Installation
+```sh
+yarn add mongodb @prisma/client prisma
+```
+
+## .env
+```
+DATABASE_URL="your database url"
+``` 
+
+## schema.prisma
+```prisma:/prisma/schema.prisma
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+model Views {
+    id      String  @id @default(auto()) @map("_id") @db.ObjectId
+    title   String  @unique
+    views   Int     @default(0)
+}
+```
+
+## vercel.json
+```json:/vercel.json
+{
+  "buildCommand": "yarn run vercel-build",
+  "framework": "nextjs"
+}
+
+```
+
+
+## package.json
+```json:/package.json
+"scripts":{
+    // ...
+    "prisma:generate": "npx prisma generate",
+    "vercel-build": "yarn run prisma:generate && yarn run build",
+    // ...
+}
+```
+
+## Create database
+
+```sh
+npx prisma db push
+npx prisma generate
+npx prisma studio
+```
+
+
+[https://www.prisma.io/docs/guides/deployment/serverless/deploy-to-vercel](https://www.prisma.io/docs/guides/deployment/serverless/deploy-to-vercel)
