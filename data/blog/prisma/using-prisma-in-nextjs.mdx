@@ -2,7 +2,7 @@
 title: '[Prisma] Usage in Nextjs and deploy on vercel'
 date: '2023-11-11'
 tags: ['typescript']
-draft: true
+draft: false
 summary: 'How to map mongodb using prisma in Nextjs and deploy on vercel'
 ---
 
@@ -12,6 +12,9 @@ yarn add mongodb @prisma/client prisma
 ```
 
 ## .env
+
+For testing purpose
+
 ```
 DATABASE_URL="your database url"
 ``` 
@@ -46,22 +49,27 @@ model Views {
 
 
 ## package.json
+
+Because vercel automatically caches dependencies on deployment, update may not be applied properly.
+
 ```json:/package.json
 "scripts":{
     // ...
+    // generate prisma client
     "prisma:generate": "npx prisma generate",
     "vercel-build": "yarn run prisma:generate && yarn run build",
     // ...
 }
 ```
 
-## Create database
-
+## Prisma Studio 
 ```sh
-npx prisma db push
-npx prisma generate
 npx prisma studio
 ```
 
 
+## Vercel environment variables
+![vercel environment variables](/static/images/using-prisma-in-nextjs/vercel_environment_variables.png)
+
+## Reference
 [https://www.prisma.io/docs/guides/deployment/serverless/deploy-to-vercel](https://www.prisma.io/docs/guides/deployment/serverless/deploy-to-vercel)
