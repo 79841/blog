@@ -1,0 +1,21 @@
+---
+title: '[Typescript] How to specify the key type of an object'
+date: '2023-11-11'
+tags: ['typescript']
+draft: false
+summary: 'Specifying the key type of an object in typescript'
+---
+
+# Example
+
+```typescript
+type TProduct = {
+  id: number
+  name: string
+  price: number
+}
+
+type TCart = {
+  [id: TProduct['id']]: { count: number; product: TProduct }
+}
+```
