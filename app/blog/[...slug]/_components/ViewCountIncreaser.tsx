@@ -11,18 +11,7 @@ export default function ViewCountIncreaser({
 }) {
   useEffect(() => {
     const increaseViewCount = async () => {
-      // try {
-      //   console.log('hello')
-      //   const res = await fetch(`/api/views/${title}`, {
-      //     method: 'POST',
-      //   })
-      // } catch (e) {
-      //   console.log(e)
-      // }
-
       const views = await (await fetch(`/api/views/${title}`)).json()
-      console.log(views)
-      console.log(title)
       if (views === null) {
         await fetch(`/api/views/${title}`, {
           method: 'POST',

@@ -13,7 +13,6 @@ const MainPostPreview = ({ slug }: Props) => {
     }
     fetchViews()
   }, [])
-  console.log(viewCount)
   return <div className="text-right text-gray-500 dark:text-gray-400">{`views: ${viewCount}`}</div>
 }
 export default MainPostPreview

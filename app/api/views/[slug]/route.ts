@@ -10,7 +10,6 @@ export async function POST(request: Request, { params }: { params: { slug: strin
     })
     return Response.json(post)
   } catch (e) {
-    console.log(e)
     return new Response('Failed to create data', { status: 500 })
   }
 }
