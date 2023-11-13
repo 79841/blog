@@ -1,0 +1,32 @@
+---
+title: '[Nextjs] Caching issue with data fetching of nextjs app router after build'
+date: '2023-11-13'
+tags: ['Nextjs', 'cache']
+draft: false
+summary: 'How to solve the problem of cached data fetched after build in nextjs app router'
+---
+
+## Example
+```typescript:/app/api/views/[slug]/route.ts
+import { NextResponse } from 'next/server'
+import prisma from 'prisma/client'
+
+// disable all caching of fetch requests
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: Request) {
+  const {
+    _sum: { views },
+  } = await prisma.views.aggregate({
+    _sum: {
+      views: true,
+    },
+  })
+  return NextResponse.json({ views })
+}
+
+```
+
+
+## Reference
+[https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic)
