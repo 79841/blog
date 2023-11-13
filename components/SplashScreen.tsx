@@ -8,9 +8,7 @@ const viewCountIncreasingTime = 2000
 const lineAppearingTime = 500
 const hFullDelay = viewCountIncreasingTime + lineAppearingTime
 const logoAppearingTime = 700
-// const transparentingDelay = 1500
 const disappearingDelay = 3200
-
 const screenDisappearingTime = 1000
 
 type TTotalViewsProps = {
@@ -31,7 +29,7 @@ const TotalViews = ({ totalViews }: TTotalViewsProps) => {
   return (
     <div>
       <span>{`${increasingNumber}`}</span>
-      <span className="text- sm:text-6xl md:text-9xl">views</span>
+      <span className="text-4xl sm:text-6xl md:text-9xl">views</span>
     </div>
   )
 }
@@ -54,6 +52,7 @@ export default function SplashScreen() {
     // if (typeof Cookies.get('Splashed') != 'undefined') return
     const fetchTotalViews = async () => {
       const { views } = await (await fetch('/api/views')).json()
+      console.log(views)
       setTotalViews(views)
       setToShow(true)
     }
