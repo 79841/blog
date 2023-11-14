@@ -1,0 +1,217 @@
+---
+title: '[Nextjs] ServerActions'
+date: '2023-11-15'
+tags: ['Nextjs', 'serverActions', 'useFormState', 'useFormStatus']
+draft: false
+summary: Practice of ServerActions
+---
+
+## Structure
+
+```sh
+├─actions
+├─app
+│  ├─admin
+│  │  └─_components
+│  └─api
+│      ├─category
+│      ├─product
+│      └─production
+├─components
+│  └─category
+├─lib
+├─prisma
+│  └─client
+├─types
+└─utils
+```
+
+## Actions
+
+```typescript:/actions/category.ts
+"use server";
+import prisma from "../prisma/client";
+import { TCategory } from "@/types/Category";
+import { revalidatePath } from "next/cache";
+
+export const createCategory = async (name: string) => {
+  await prisma.category.create({
+    data: { name },
+  });
+
+  revalidatePath("/admin");
+};
+
+export const getCategories = async () => {
+  const category = await prisma.category.findMany();
+  return category;
+};
+
+export const deleteCategory = async (id: TCategory["id"]) => {
+  const category = await prisma.category.delete({
+    where: {
+      id,
+    },
+  });
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  revalidatePath("/adimn");
+};
+
+```
+
+## Section
+
+```typescript:/app/admin/_components/CategorySection.tsx
+import { Categories } from "@/components/category";
+import { CategoryAddForm } from "@/components/category/CategoryAddForm";
+import SectionLayout from "./SectionLayout";
+
+const CategorySection = () => {
+  return (
+    <SectionLayout title={"Category"}>
+      <CategoryAddForm />
+      <Categories />
+    </SectionLayout>
+  );
+};
+
+export default CategorySection;
+```
+
+## Fetch data in the server component
+
+```typescript:/components/category/Categories.tsx
+import { getCategories } from "@/actions/category";
+import { Category } from "./Category";
+
+export const Categories = async () => {
+  const categories = await getCategories();
+  return (
+    <div className="w-[70%]">
+      <ul>
+        {categories.map((category) => (
+          <li key={category.id}>
+            <Category category={category} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+## Call serverActions in the client component
+
+```typescript:/components/category/Category.tsx
+"use client";
+import { deleteCategory } from "@/actions/category";
+import { TCategory } from "@/types/Category";
+import { useFormState, useFormStatus } from "react-dom";
+import { z } from "zod";
+
+const DeleteButton = () => {
+  // useFormStatus
+  const { pending } = useFormStatus();
+  return (
+    <button
+      className="text-red-500 disabled:text-gray-400"
+      type="submit"
+      disabled={pending}
+    >
+      X
+    </button>
+  );
+};
+
+type TCategoryProps = { category: TCategory };
+
+export const Category = ({ category }: TCategoryProps) => {
+  const handleAction = async (prevState: any, formData: FormData) => {
+    const schema = z.object({
+      id: z.string().min(1),
+    });
+    const validatedData = schema.safeParse({
+      id: formData.get("id"),
+    });
+    if (!validatedData.success) {
+      return { message: "Wrong category id" };
+    }
+    try {
+      // Call serverActions
+      await deleteCategory(validatedData.data.id);
+      return { message: `Deleted category ${validatedData.data.id}` };
+    } catch (e) {
+      return { message: "Failed to delete category" };
+    }
+  };
+
+  // useFormState
+  const [state, formAction] = useFormState(handleAction, null);
+
+  return (
+    <div className="flex">
+      <div className="mr-2 mb-1">{category.name}</div>
+      <form action={formAction}>
+        <input type="hidden" name="id" value={category.id} />
+        <DeleteButton />
+      </form>
+      <div>{state?.message}</div>
+    </div>
+  );
+};
+
+```
+
+```typescript:/components/category/CategoryAddForm.tsx
+"use client";
+import { createCategory } from "@/actions/category";
+import { useRef } from "react";
+import { useFormState } from "react-dom";
+import { z } from "zod";
+
+export const CategoryAddForm = () => {
+  const ref = useRef<HTMLFormElement>(null);
+
+  const handleAction = async (prevState: any, formData: FormData) => {
+    const schema = z.object({
+      name: z.string().min(1),
+    });
+    const validatedData = schema.safeParse({
+      name: formData.get("name"),
+    });
+
+    if (!validatedData.success) {
+      return { message: "Wrong category name" };
+    }
+    try {
+      await createCategory(validatedData.data.name);
+      ref.current?.reset();
+      return { message: `Added category ${validatedData.data.name}` };
+    } catch (e) {
+      return { message: "Failed to create category" };
+    }
+  };
+
+  const [state, formAction] = useFormState(handleAction, null);
+
+  return (
+    <div className="flex flex-col items-center">
+      <form ref={ref} action={formAction}>
+        <input
+          className="border-black border-2 border-solid h-8 rounded-md mr-4"
+          type="text"
+          name="name"
+        />
+        <button
+          type="submit"
+          className="border-black border-2 border-solid h-8 rounded-md w-16"
+        >
+          Add
+        </button>
+      </form>
+      <div className="text-red-500 m-2">{state?.message}</div>
+    </div>
+  );
+};
+
+```
