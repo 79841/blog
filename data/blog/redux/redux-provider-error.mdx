@@ -1,0 +1,30 @@
+---
+title:
+  '[Redux] TypeError: (0 , _utils_useIsomorphicLayoutEffect__WEBPACK_IMPORTED_MODULE_3__.useIsomorphicLayoutEffect) is not a function
+  at stringify (<anonymous>)'
+date: '2023-11-22'
+tags: ['redux', 'redux-toolkit', 'nextjs', 'provider']
+draft: false
+summary: 'How to fix up type error of redux provider in nextjs'
+---
+
+## Error
+
+![231122-032414](/static/images/redux-provider-error/231122-032414.png)
+
+## How to fix up
+
+Add "use client" on top
+
+```typescript:provider.tsx
+"use client";
+import { PropsWithChildren } from "react";
+import { Provider } from "react-redux";
+import { reduxStore } from "./store";
+
+type TProvidersProps = PropsWithChildren;
+export const Providers = ({ children }: TProvidersProps) => {
+  return <Provider store={reduxStore}>{children}</Provider>;
+};
+
+```
