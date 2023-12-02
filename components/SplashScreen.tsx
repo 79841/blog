@@ -16,7 +16,7 @@ export default function SplashScreen() {
   }
 
   useEffect(() => {
-    // if (typeof Cookies.get('Splashed') != 'undefined') return
+    if (typeof Cookies.get('Splashed') != 'undefined') return
     setToShow(true)
     setTimeout(() => setHeight('h-full'), 500)
     setTimeout(() => setOpacity('opacity-0'), 1500)
