@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* width */
+  ::-webkit-scrollbar {
+    @apply w-[8px];
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-[5px] bg-gray-500;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-800 dark:bg-gray-300;
+  }
+}
+
 .task-list-item::before {
   @apply hidden;
 }
