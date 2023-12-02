@@ -7,21 +7,21 @@ import { useTheme } from 'next-themes'
 export default function SplashScreen() {
   const [height, setHeight] = useState<string>('h-0')
   const [opacity, setOpacity] = useState<string>('opacity-100')
-  const [toShow, setToShow] = useState<boolean>(false)
+  const [toShow, setToShow] = useState<boolean>(true)
 
   const { theme } = useTheme()
 
-  const setCookie = () => {
-    Cookies.set('Splashed', 'true', { expires: 1 })
-  }
+  // const setCookie = () => {
+  //   Cookies.set('Splashed', 'true', { expires: 1 })
+  // }
 
   useEffect(() => {
-    if (typeof Cookies.get('Splashed') != 'undefined') return
-    setToShow(true)
+    // if (typeof Cookies.get('Splashed') != 'undefined') return
+    // setToShow(true)
     setTimeout(() => setHeight('h-full'), 500)
     setTimeout(() => setOpacity('opacity-0'), 1500)
     setTimeout(() => {
-      setCookie()
+      // setCookie()
       setToShow(false)
     }, 2200)
   }, [])

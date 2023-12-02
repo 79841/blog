@@ -3,8 +3,9 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
 import NewsletterForm from 'pliny/ui/NewsletterForm'
-import SplashScreen from '@/components/SplashScreen'
-import ViewCount from './_components/ViewCount'
+import SplashScreen from './_components/SplashScreen'
+// import SplashScreen from '@/components/SplashScreen'
+// import ViewCount from './_components/ViewCount'
 
 const MAX_DISPLAY = 5
 
@@ -65,7 +66,7 @@ export default function Home({ posts }) {
                         >
                           Read more &rarr;
                         </Link>
-                        <ViewCount slug={slug} />
+                        {/* <ViewCount slug={slug} /> */}
                       </div>
                     </div>
                   </div>
