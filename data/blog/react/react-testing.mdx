@@ -1,0 +1,105 @@
+---
+title: '[React] React에서 Testing하기'
+date: '2023-12-04'
+tags: ['react', 'jest', 'test-library']
+draft: true
+summary: test-library와 jest를 사용하고 TDD를 해보자
+---
+
+## TDD란?
+
+## Jest란?
+
+## react-testing-library란?
+
+## File Convention
+
+file.test.js or file.test.tsx
+file.spec.js or file.spec.tsx
+`__tests__`
+
+## Code Coverage
+
+- statements
+- branch
+- functions
+- lines
+
+```json:package.json
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "coverage": "yarn test --coverage --watchAll --collectCoverageFrom='src/components/**/*.{ts,tsx}'"
+}
+```
+
+## Jest Matchers
+
+https://jestjs.io/docs/using-matchers
+
+## Jest-dom
+
+https://github.com/testing-library/jest-dom
+
+## 무엇을 테스트 해야하는가?
+
+component renders
+component renders with props
+component renders in different states
+component reacts to events
+
+## 무엇을 테스트하지 말아야하는가?
+
+Implementation details
+Third party code
+Code that is not important from a user point of view
+
+## RTL Quries
+
+1. Render the component
+2. Find an element render by the component
+3. Assert against the element found in step 2 which will pass or fail the test
+
+### getByRole
+
+https://www.w3.org/TR/html-aria/#docconformance
+
+**options**
+
+- name
+- level
+- hidden
+- selected
+- checked
+- pressed
+
+### getByLabelText
+
+### getByPlaceholderText
+
+### getByText
+
+### getByDisplayValue
+
+### getByAltText
+
+### getByTitle
+
+### getByTestId
+
+## Priority order of Queries
+
+Your test should resemble how users interact with your code(component, page, etc...) as much as possible
+
+1. getByRole
+2. getByLabelText
+3. getByPlaceholderText
+4. getByText
+5. getByDisplayValue
+6. getByAltText
+7. getByTitle
+8. getByTestId
+
+### queryByRole
