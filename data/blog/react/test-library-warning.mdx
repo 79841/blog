@@ -1,0 +1,41 @@
+---
+title: '[React] Testing 시 발생하는 warning 해결하기'
+date: '2023-12-04'
+tags: ['react', 'jest', 'test-library']
+draft: false
+summary: react-testing-library 사용시 발생하는 두가지 warning 해결하기
+---
+
+## Warning
+
+```
+One of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it may break at any time.
+
+babel-preset-react-app is part of the create-react-app project, which
+is not maintianed anymore. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.
+```
+
+## Solution
+
+```sh
+yarn add --dev @babel/plugin-proposal-private-property-in-object
+```
+
+## Warning
+
+```
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+```
+
+## Solution
+
+```json:package.json
+"test": "react-scripts test --detectOpenHandles",
+```
