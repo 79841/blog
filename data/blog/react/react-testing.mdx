@@ -161,3 +161,72 @@ act
 ## Mocking functions
 
 jest.fn()
+
+## Mocking http requests
+
+https://mswjs.io/docs/basics/mocking-responses
+
+## Static analysis testing
+
+Process of verifying that your code meets certain expectations without actually running it
+
+- Ensure consistent style and formatting
+- Check for common mistakes and possible bugs
+- Limit the complexity of code
+- Verity type consistency
+
+## Lint
+
+yarn add -D eslint-plugin-jest-dom
+
+```json
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest",
+      "plugin:jest-dom/recommended"
+    ]
+  }
+```
+
+```json:package.json
+  "scripts":{
+    "lint": "eslint --ignore-path .gitignore .",
+  }
+```
+
+yarn lint
+
+## Prettier
+
+yarn add --dev --exact prettier
+
+```json:package.json
+    "format": "prettier --ignore-path .gitignore --write \"**/*.{ts,tsx,css,scss}\"",
+```
+
+```json:.prettierrc.json
+{
+  "semi": false,
+  "singleQuote": true
+}
+```
+
+yarn format
+
+yarn add -D eslint-config-prettier
+
+## Husky
+
+Husky is a tool that helps improve your commits and more
+
+(npx husky-init) -and (yarn)
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+yarn lint && yarn format
+```
+
+## Lint staged
