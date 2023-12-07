@@ -1,0 +1,169 @@
+---
+title: '[React] MSW2.0 setupServer 사용시 TextEncoder undefined error 해결하기'
+date: '2023-12-07'
+tags: ['react', 'jest', 'test-library', 'msw']
+draft: false
+summary: React에서 MSW2.0 setupServer 사용시 TextEncoder undefined error 해결하기
+---
+
+## 설치
+
+```sh
+yarn create react-app ./ --template typescript
+yarn add msw --dev
+```
+
+## 테스트 서버 구성
+
+```typescript:/src/mocks/handlers.ts
+import { HttpResponse, http } from "msw";
+export const handlers = [
+  http.get("https://jsonplaceholder.typicode.com/users", () => {
+    return HttpResponse.json([
+      { id: 1, name: "Tom", username: "user1", email: "user1@test.com" },
+      { id: 2, name: "Jerry", username: "user2", email: "user2@test.com" },
+      { id: 3, name: "Smith", username: "user3", email: "user3@test.com" },
+      { id: 4, name: "Alex", username: "user4", email: "user4@test.com" },
+    ]);
+  }),
+];
+```
+
+```typescript:/src/mocks/server.ts
+import { setupServer } from "msw/node";
+import { handlers } from "./handlers";
+export const server = setupServer(...handlers);
+```
+
+```typescript:/src/setupTests.ts
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import "@testing-library/jest-dom";
+import { server } from "./mocks/server";
+
+beforeAll(() => {
+  server.listen();
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
+```
+
+## 테스트 코드
+
+```typescript:/src/components/user/Users.test.tsx
+import { render, screen } from "@testing-library/react";
+import { Users } from "./Users";
+
+describe("Users", () => {
+  test("render correctly", () => {
+    render(<Users />);
+    const heading = screen.getByRole("heading");
+    expect(heading).toBeInTheDocument();
+  });
+
+  test("fetch user data", async () => {
+    render(<Users />);
+    const listItem = await screen.findAllByRole("listitem");
+    expect(listItem).toHaveLength(4);
+  });
+});
+
+```
+
+## 테스트 실행
+
+```sh
+yarn test
+```
+
+TextEncoder is not defined 오류 발생
+
+![231207-202111](/static/images/textencoder-undefined/231207-202111.png)
+
+https://mswjs.io/docs/faq/#requestresponsetextencoder-is-not-defined-jest
+
+테스트환경에 Node.js globals가 존재하지 않아 발생하는 오류이다.
+
+## 커스텀 테스트 환경 추가
+
+--env 옵션으로 테스트 환경을 추가할 수 있다.
+
+https://create-react-app.dev/docs/running-tests#disabling-jsdom
+
+```json:package.json
+  "scripts": {
+    "test": "react-scripts test --env=./test/test.env.js",
+  },
+```
+
+## 커스텀 테스트 환경 구성
+
+직접 TextEncoder를 불러와 global에 추가해준다.
+
+```javascript:/test/test.env.js
+const Environment = require("jest-environment-jsdom");
+
+module.exports = class CustomTestEnvironment extends Environment {
+  async setup() {
+    await super.setup();
+    if (typeof this.global.TextEncoder === "undefined") {
+      const { TextEncoder } = require("util");
+      this.global.TextEncoder = TextEncoder;
+    }
+  }
+};
+```
+
+![231207-202526](/static/images/textencoder-undefined/231207-202526.png)
+
+Syntax 오류가 발생한다. 기본적으로 node_modules 하위 파일들은 컴파일을 생략하기 때문에 typescript 프로젝트를 jest는 이를 이해할 수 없다.
+때문에 transformIgnorePatterns를 수정하여 컴파일되도록 한다.
+
+https://jestjs.io/docs/configuration#transformignorepatterns-arraystring
+
+```json:package.json
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@bundled-es-modules/)"
+    ]
+  },
+```
+
+## Body를 받아오지 못하는 문제
+
+response body를 제대로 받아오지 못한다.
+
+![231207-203847](/static/images/textencoder-undefined/231207-203847.png)
+
+https://mswjs.io/docs/faq/#requestresponsetextencoder-is-not-defined-jest
+
+msw 공식 문서를 다시 보면 Response와 Request에 관한 내용이 있다.
+이 둘도 global로 등록해준다.
+
+```javascript:test.env.js
+const Environment = require("jest-environment-jsdom");
+
+module.exports = class CustomTestEnvironment extends Environment {
+  async setup() {
+    await super.setup();
+    if (typeof this.global.TextEncoder === "undefined") {
+      const { TextEncoder } = require("util");
+      this.global.TextEncoder = TextEncoder;
+      this.global.Response = Response;
+      this.global.Request = Request;
+    }
+  }
+};
+```
+
+## 성공
+
+![231207-204720](/static/images/textencoder-undefined/231207-204720.png)
