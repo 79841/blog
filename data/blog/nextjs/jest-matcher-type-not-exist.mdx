@@ -1,0 +1,60 @@
+---
+title: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<HTMLElement>'.
+date: '2024-12-08'
+tags: ['nextjs', 'jest', 'testing-library']
+draft: false
+summary: Property 'toBeInTheDocument' does not exist on type 'JestMatchers<HTMLElement>'. 해결하기
+---
+
+## Property 'toBeInTheDocument' does not exist on type 'JestMatchers<HTMLElement>'.
+
+![231208-175902](/static/images/jest-matcher-type-not-exist/231208-175902.png)
+
+Nextjs에서 테스팅하던 중 위와 같은 경고가 발생했다.
+
+https://stackoverflow.com/questions/57861187/property-tobeinthedocument-does-not-exist-on-type-matchersany
+
+stackoverflow를 보니 여러가지 해결방법이 나온다.
+Nextjs 공식문서에 나온 템플릿에 맞춰서 해결해보았다.
+
+https://nextjs.org/docs/pages/building-your-application/optimizing/testing#setting-up-jest-with-the-rust-compiler
+
+```javascript:jest.config.js
+import nextJest from 'next/jest.js'
+
+const createJestConfig = nextJest({
+  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+  dir: './',
+})
+
+// Add any custom config to be passed to Jest
+/** @type {import('jest').Config} */
+const config = {
+  // Add more setup options before each test is run
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'], // 주석해제
+
+  testEnvironment: 'jest-environment-jsdom',
+}
+
+// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
+export default createJestConfig(config)
+```
+
+setupFilesAfterEnv 속서을 주석 해제해준다.
+
+```javascript:jest.setup.js
+// Learn more: https://github.com/testing-library/jest-dom
+import "@testing-library/jest-dom";
+```
+
+jest.setup.js파일을 만들고 jest-dom을 import 한다.
+
+```json:tsconfig.json
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "jest.setup.js"],
+```
+
+tsconfig.json을 열고 jest.config.js를 추가한다. tsconfig.json을 수정하고 싶지 않다면 jest.setup.ts로 만들면 된다.
+
+![231208-181236](/static/images/jest-matcher-type-not-exist/231208-181236.png)
+
+해결됐다.
