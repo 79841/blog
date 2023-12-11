@@ -3,10 +3,11 @@ title: '[Nextjs] Caching issue with data fetching of nextjs app router after bui
 date: '2023-11-13'
 tags: ['Nextjs', 'cache']
 draft: false
-summary: 'How to solve the problem of cached data fetched after build in nextjs app router'
+summary: How to solve the problem of cached data fetched after build in nextjs app router
 ---
 
 ## Example
+
 ```typescript:/app/api/views/[slug]/route.ts
 import { NextResponse } from 'next/server'
 import prisma from 'prisma/client'
@@ -27,6 +28,6 @@ export async function GET(request: Request) {
 
 ```
 
-
 ## Reference
+
 [https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic)
