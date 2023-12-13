@@ -1,0 +1,18 @@
+---
+title: '[Flutter] Google OAuth'
+date: '2023-12-13'
+tags: ['flutter', 'oauth', 'google']
+draft: true
+summary: Google OAuth in flutter
+---
+
+구글 로그인 정리
+
+1. clientId는 애플리케이션 유형별로 다르게 사용해야 한다.(안드로이드, ios, 웹 따로 )
+   https://stackoverflow.com/questions/63651325/cross-client-identity-google-oauth-api-console-flutter-app
+2. 모바일에서 구글 로그인을 할때는 clientId를 기기에 저장하여 사용한다.
+3. 백엔드에서는 idToken을 이용해 사용자를 검증할 수 있다. firebase를 사용하는것과 관련없다.
+   https://developers.google.com/identity/gsi/web/guides/verify-google-id-token?hl=ko#using-a-google-api-client-library
+4. idToken는 사용자 정보가 들어가있는 토큰이라 백엔드에서는 idToken을 이용해 검증과 사용자 정보를 업데이트 할 수 있다.
+5. firebase이용시 소셜 로그인은 자동로그인되며 이것은 수정할 수 없다.
+   https://firebase.google.com/docs/auth/flutter/start?hl=ko#persisting_authentication_state
