@@ -1,9 +1,9 @@
 ---
-title: '[Flutter] 구글 소셜 로그인'
+title: '[Flutter] Firebase 사용하지 않고 Google 소셜 로그인 구현하기'
 date: '2023-12-13'
-tags: ['flutter', 'oauth', 'google']
-draft: true
-summary: Google OAuth in flutter
+tags: ['flutter', 'oidc', 'oauth', 'google', 'social login']
+draft: false
+summary: OIDC로 firebase없이 Google 소셜 로그인 구현
 ---
 
 ## 소셜 로그인 (Social Sign-on, SSO)
@@ -42,7 +42,7 @@ flutter pub add google_sign_in
 flutter pub add sign_in_button
 ```
 
-[google_sign_in 패키지 예시](https://pub.dev/packages/google_sign_in/example)를 복사해서 main.dart에 넣어주고 로그인 버튼만 구현해 준다.
+[google_sign_in 패키지 예시](https://pub.dev/packages/google_sign_in/example)를 복사해서 main.dart에 넣어주고 로그인 버튼만 구현해 준다. \_handleSignIn은 예시에 구현되어 있다.
 
 ```dart:main.dart
    SignInButton(
@@ -51,26 +51,41 @@ flutter pub add sign_in_button
    ),
 ```
 
-이제 구글 클라우드 플랫폼에 들어가서 프로젝트를 생성하고 Client키를 만들어준다. OIDC를 사용할 경우
+이제 구글 클라우드 플랫폼에 들어가서 프로젝트를 생성하고 Client키를 만들어준다. OIDC를 사용할 경우 Client ID를 웹 애플리케이션과 안드로이드 두개를 만들어야 한다.
 
-1. GCP clientId는 애플리케이션 유형별로 다르게 사용해야 한다.(안드로이드, ios, 웹 따로 )
-   https://stackoverflow.com/questions/63651325/cross-client-identity-google-oauth-api-console-flutter-app
-2. 모바일에서 구글 로그인을 할때는 clientId를 기기에 저장하여 사용한다.
+![231219-010425](/static/images/google-oauth/231219-010425.png)
 
-3. 백엔드에서는 idToken을 이용해 사용자를 검증할 수 있다. firebase를 사용하는것과 관련없다.
-   https://developers.google.com/identity/gsi/web/guides/verify-google-id-token?hl=ko#using-a-google-api-client-library
+안드로이드용 Client ID를 만들때 디지털 지문을 넣어줘야 한다.
 
-4. idToken는 사용자 정보가 들어가있는 토큰이라 백엔드에서는 idToken을 이용해 검증과 사용자 정보를 업데이트 할 수 있다.
+![231219-011045](/static/images/google-oauth/231219-011045.png)
 
-5. firebase이용시 소셜 로그인은 자동로그인되며 이것은 수정할 수 없다.
-   https://firebase.google.com/docs/auth/flutter/start?hl=ko#persisting_authentication_state
-
-6. ID Token과 Access Token
-
-ID 토큰은
-
-## Firebase 없이 구글 소셜 로그인 구현 (idToken)
+구글 안드로이드 가이드 나온 방법 중 애플리케이션 바이너리 인증서를 가져오는 방법으로 디지털 지문을 만들어준다.
 
 https://developers.google.com/android/guides/client-auth?hl=en#using_keytool_on_an_apk_or_aab
 
-https://www.youtube.com/watch?v=k7TVYn5jwQk
+만들기 전에 빌드되어 있는 apk가 존재해야 한다.
+
+두개 모두 Client ID를 만들었으면 다시 코드로 돌아온다.
+웹 애플리케이션 Client ID를 GoogleSignIn 생성자에 serverClientId로 넣어준다.
+
+```dart:main.dart
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  serverClientId:
+      'your web application client ID',
+  scopes: scopes,
+);
+```
+
+앱을 실행시켜 보면 로그인 화면이 나온다.
+![231219-013708](/static/images/google-oauth/231219-013708.png)
+
+구글 로그인 버튼을 누르면 구글 로그인 창이 나오고 로그인을 진행하면 아래와 같이 로그인이 성공적으로 된 것을 확인할 수 있다.
+![231219-013656](/static/images/google-oauth/231219-013656.png)
+
+앱을 껐다가 다시 실행해보면 자동로그인도 잘 되는 것을 알 수 있다.
+
+구축해둔 백엔드가 존재한다면 백엔드로 ID token을 전송해서 검증하여 사용하면 된다.
+
+https://developers.google.com/identity/gsi/web/guides/verify-google-id-token?hl=ko#using-a-google-api-client-library
+
+구글 소셜 로그인 예시를 찾아보면 대부분 firebase를 사용했고 특히나 firebase 없이 OIDC를 구현한 예시는 나오지 않아 정리해보았다.
