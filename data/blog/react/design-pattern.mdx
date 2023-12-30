@@ -1,0 +1,64 @@
+---
+title: '[React] 리액트에서 사용되는 디자인 패턴'
+date: '2023-12-31'
+tags: ['react', 'design pattern']
+draft: false
+summary: 리액트에서 사용되는 디자인 패턴을 간단하게 정리하고 그에 대한 생각을 정리한 것이다.
+---
+
+
+## Design Pattern
+
+1. Presentation/Container pattern
+
+![231231-004526](/static/images/nextjs-file-structure/231231-004526.png)
+
+디자인과 로직을 분리하는 기본적인 디자인 패턴이다. 디자인을 재사용할 수 있다.
+
+2. VAC(View Asset Component) pattern
+
+![231231-004814](/static/images/nextjs-file-structure/231231-004814.png)
+
+Presentation & Container pattern에서 더 나아가 렌더링 처리 부분을 분리하는 패턴이다. 상태를 갖지않는 stateless 컴포넌트이다. 디자인과 로직간의 완전한 분리가 가능하여 ui 개발자와 로직 개발자가 따로 존재하는 경우 유용하다.
+단점으로는 prop이 많아지고 prop drilling이 발생할 수 있으며 코드가 복잡해진다. 개인적으로 디자인 시스템에서 나온 파생물만 적용하는 것이 좋다고 생각한다.
+
+3. Custom Hooks pattern
+
+![231231-004345](/static/images/nextjs-file-structure/231231-004345.png)
+
+로직을 custom hook으로 분리하여 관리하는 것이다. 로직 자체를 재사용할 수 있기에 유용하다. 재사용이 아니더라도 로직이 복잡하고 양이 많아지는 경우 훅으로 분리하는 것이 가독성이 좋아지고 유지보수하는데 좋다.
+
+4. Compound component pattern
+
+![231231-004307](/static/images/nextjs-file-structure/231231-004307.png)
+
+복잡한 구성을 갖는 컴포넌트를 재사용하는 경우가 있다. 이때 컴포넌트간에 prop를 전달하면서 prop drilling이 발생할 수 있다. 
+이런 문제를 해결하기 위해 Compound component pattern은 상위 컴포넌트에서 상태를 공유하고 하위 컴포넌트를 상위 컴포넌트로 전달하여 해결하는 것이다.
+재사용할 컴포넌트안에서 context를 사용하는 것이 대표적인 예이다.
+
+5. Render props pattern
+
+![231231-004131](/static/images/nextjs-file-structure/231231-004131.png)
+
+렌더링할 함수를 prop으로 전달하는 패턴이다. 함수는 컴포넌트를 리턴한다. 선택적 렌더링을 가능하게 해주고 무엇을 렌더링할지 인지할 수 있다.
+items 컴포넌트에서 prop으로 item 컴포넌트를 넘겨주는 것이 예이다. items의 재사용성이 클때 유용한 것 같다.
+
+6. Atomic design pattern
+
+![231231-004018](/static/images/nextjs-file-structure/231231-004018.png)
+
+컴포넌트 재사용을 최대화하기 위한 방법론이다. atom(원자), molecule(분자), organism(유기체), template(템플릿), page(페이지) 단위로 컴포넌트를 쪼개서 사용한다.
+디자인 시스템 구축에 용이하고 재사용성이 향상된다. 하지만 어디까지 컴포넌트를 분리할지에 대한 논의가 필요하고 과도한 분리는 유지보수를 힘들게하며 prop drilling이 발생하게 된다.
+
+7. Flux pattern
+웹 애플리케이션을 개발할때 MVC 패턴을 자주 사용한다. 웹 페이지의 특성상 컴포넌트가 많은 만큼 모델과 뷰의 관계도 굉장히 많아질 것이다. 이를 관리하는 컨트롤러는 덩어리가 커지고 복잡해져 데이터 흐름을 따라가기 어렵고 유지보수성과 확장성이 떨어진다. 
+이런 문제를 해결하고 데이터의 흐름을 단방향으로 바꾸기 위해 나타난것이 Flux 패턴이다.
+
+![231231-002315](/static/images/nextjs-file-structure/231231-002315.png)
+
+Action이 발생하면 dispatcher는 이를 분석하고 store에 저장된 데이터를 업데이트한다. View는 store에서 데이터를 가져다 반영한다.
+대표적인 상태관리 라이브러리 redux와 React에서 제공하는 useReducer 훅이 Flux 패턴의 대표적인 예이다.
+
+
+## 참고
+https://www.patterns.dev/react/
