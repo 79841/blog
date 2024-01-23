@@ -1,9 +1,9 @@
 ---
-title: '[React] 번들이란?'
+title: '번들이란?'
 date: '2024-01-14'
-tags: ['react', 'bundle']
-draft: true
-summary: bundle이란 무엇이고 어떻게 최적화하는가?
+tags: ['web', 'bundle', 'webpack', 'babel', 'swc', 'turbopack']
+draft: false
+summary: bundle이란 무엇인가?
 ---
 
 ## 번들(Bundle)이란?
@@ -24,6 +24,8 @@ summary: bundle이란 무엇이고 어떻게 최적화하는가?
   - 개발 시 코드를 모율화하여 관리하고 번들러는 이러한 모듈들을 하나의 파일로 결합하여, 모듈 간의 의존성을 관리하고 실행 순서를 보장한다.
 
 ## 웹팩(Webpack)과 바벨(Babel)
+
+![240123-155056](/static/images/bundle/240123-155056.png)
 
 ### 웹팩이란?
 
@@ -50,6 +52,11 @@ summary: bundle이란 무엇이고 어떻게 최적화하는가?
 
 ## Turbopack과 SWC
 
+웹팩과 바벨은 JS로 만들어져 성능에 한계가 있고 프로젝트가 커질 수록 빌드시 많은 시간이 걸렸다.
+성능 문제를 해결하기 위해 Rust로 만들어진 번들러와 트렌스파일러가 등장하게 된다.
+
+바로 Turbopack과 SWC이다.
+
 ### Turbopack이란?
 
 Next.js 13버전이 발표되고 새로운 번들러로 Turbopack이 소개되었다.
@@ -69,5 +76,7 @@ Next.js 13 공식문서를 확인해보면 Turbopack의 향상된 성능을 확�
 
 ### SWC
 
-Rust로 만들어진 트렌스파일러로 바벨과 마찬가지로 최신 JS 코들르 이전 버전으로 변환해주는 역할을 한다.
+Rust로 만들어진 트렌스파일러로 바벨과 마찬가지로 최신 JS 코드를 이전 버전(ECMA5)으로 변환해주는 역할을 한다.
 바벨보다 월등히 빠르며 Next.js를 사용할 경우 별다른 설치 없이 사용할 수 있다.
+
+다음 포스트에서 react와 nextjs에서 번들 사이즈를 최적화 하는 방법을 알아보겠다.
