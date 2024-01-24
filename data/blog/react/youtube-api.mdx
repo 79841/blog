@@ -1,0 +1,62 @@
+---
+title: '[React] Youtube API'
+date: '2024-01-23'
+tags: ['react', 'youtube api', 'google api']
+draft: draft
+summary: Youtube 구독 목록 가져오기
+---
+
+## Youtube API로 구독목록을 가져오자
+
+최근 들어 유튜브 쇼츠에 중독되어 시간을 많이 보내고 있다.
+구독 목록에 개발이나 자기계발에 도움이되는 목록만 남긴 후에 구독 목록만 보여주는 웹 사이트를 만들어 쇼츠에 낭비되는 시간을 줄여보자.
+
+### 구글 클라우드 플랫폼(GCP)에서 프로젝트 만들기
+
+구글 클라우드 플랫폼에서 프로젝트를 생성한다.
+
+![240123-192324](/static/images/youtube-api/240123-192324.png)
+
+### Youtube API 추가
+
+API 라이브러리에 들어가서 youtube data api v3를 추가한다.
+
+![240123-192813](/static/images/youtube-api/240123-192813.png)
+
+### OAuth 동의 화면 추가
+
+구독정보를 가져오려면 인증이 필요하기 때문에 OAuth 동의 화면을 추가해준다.
+
+![240123-193037](/static/images/youtube-api/240123-193037.png)
+
+### 사용자 인증 정보 추가
+
+사용자 인증 정보 탭에서 API 키와 OAuth 클라이언트 ID를 만들어준다.
+
+![240123-193412](/static/images/youtube-api/240123-193412.png)
+
+### Youtube API 사용해보기
+
+Youtube API 레퍼런스에서 구독 탭을 누르면 사용예시가 나온다.
+list(my subscriptions)를 선택한다.
+
+![240123-193740](/static/images/youtube-api/240123-193740.png)
+
+여기서 간단하게 API를 테스트 해볼 수 있다.
+실행하면 구글 로그인을 진행하고 오른쪽 하단에 결과가 JSON으로 나온다.
+
+![240123-194204](/static/images/youtube-api/240123-194204.png)
+
+정상적으로 구독 목록이 나온것을 볼 수 있다.
+
+## React에서 Youtube API 사용하기
+
+### API key 등록
+
+.env에 API 키를 저장한다.
+
+```plain:.env
+REACT_APP_YOUTUBE_API_KEY={your api key}
+```
+
+###
